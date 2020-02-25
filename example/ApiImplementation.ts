@@ -2,17 +2,20 @@ import {ApiSchema, ApiData, ApiResponse} from "./ApiSchema";
 import {apiHandler} from "../src";
 
 export class ApiImplementation extends ApiSchema {
-    // async post(
-    //     body: ApiData,
-    //     kot: string
-    // ): Promise<ApiResponse> {
-    //     return Promise.resolve({
-    //         status: 'ok'
-    //     });
-    // }
-    async post(body: ApiData): Promise<ApiResponse> {
-        return super.post(body);
+    async post(
+        body: ApiData
+    ): Promise<ApiResponse> {
+        return Promise.resolve({
+            status: 'ok'
+        });
     }
 }
 
-apiHandler(ApiSchema).post
+function call(...args: any[]) {
+    const requestInfo = apiHandler(ApiSchema).post;
+
+    axios({
+        method: requestInfo.method,
+        url: `https://some.address/${requestInfo.payload(args)}`
+    })
+}
