@@ -1,9 +1,11 @@
-import {Param} from "./Param";
-import {compile} from "path-to-regexp";
-import {ApiBody, ApiParam, ApiQuery} from "./decorators";
+import {Param} from './Param';
+import {compile} from 'path-to-regexp';
+import {ApiBody, ApiParam, ApiQuery} from './decorators';
 
 export enum EndpointMethods {
-    Put= 'put',
+    Get = 'get',
+    Post = 'post',
+    Put = 'put',
     Delete = 'delete',
     Patch = 'patch',
     Options = 'option',
@@ -11,26 +13,28 @@ export enum EndpointMethods {
     All = 'all'
 }
 
-type Params = { [key: string]: string | number | (string|number)[] };
+type Params = { [key: string]: string | number | (string | number)[] };
 
-interface Payload {
+interface RequestPayload {
     uri: string;
     body?: any;
 }
 
 export class Endpoint {
-    path: string;
+    rawPath: string;
     method: EndpointMethods;
-    return: any;
+    returnType: any;
     params: Param[] = [];
 
-    payload(args: any[]): Payload {
-        const patcher = compile(this.path, { encode: encodeURIComponent });
+    request(basePath: string, args: any[]): RequestPayload {
+        const fullPath = `${basePath}/${this.rawPath}`.replace('//', '/');
+        const patcher = compile(fullPath, {encode: encodeURIComponent});
+        const query = this.generateQuerystring(args);
         return {
-            uri: patcher(this.generateFormatter(args)) + '?' + this.generateQuerystring(args),
+            uri: patcher(this.generateFormatter(args)) + (Object.keys(query).length ? '?' + this.generateQuerystring(args) : ''),
             body: this.extractBody(args)
         };
-    }
+    };
 
     private extractBody(args: any[]): any {
         try {
