@@ -1,4 +1,4 @@
-export class Param {
+export class Argument {
     constructor(
         public param: Function,
         public type: any,

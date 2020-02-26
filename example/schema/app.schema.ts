@@ -1,4 +1,4 @@
-import {ApiBody, ApiGet, ApiParam, ApiPost} from '../../src';
+import { ApiBody, ApiGet, ApiParam, ApiPost, ApiQuery } from '../../src';
 
 export class ApiData {
     prop: string
@@ -6,6 +6,10 @@ export class ApiData {
 
 export class ApiResponse {
     status: string;
+}
+
+export class ApiQueryObj {
+	page: string
 }
 
 export class AppSchema {
@@ -24,4 +28,12 @@ export class AppSchema {
     ): string {
         return param;
     }
+
+	@ApiGet('/query/:name')
+	query(
+		@ApiParam('name') param: string,
+		@ApiQuery() query: ApiQueryObj
+	): ApiQueryObj {
+		return query;
+	}
 }

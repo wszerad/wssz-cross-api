@@ -1,19 +1,18 @@
 import 'reflect-metadata';
 import {Endpoint, EndpointMethods} from './Endpoint';
-import {Param} from './Param';
+import {Argument} from './Argument';
 
 const markerMeta = Symbol.for('commonApi');
 
 export type PropertyKey = string | symbol;
 
 export function defineParamDecorator(originDecorator: Function) {
-    const factored = function (key?: string) {
+    return function (key?: string) {
         return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
             originDecorator(key)(target, propertyKey, parameterIndex);
-            decorateParam(target, propertyKey, parameterIndex, factored, key);
+            decorateParam(target, propertyKey, parameterIndex, originDecorator, key);
         };
     };
-    return factored;
 }
 
 export function defineEndpointDecorator(method: EndpointMethods, originalDecorator: Function) {
@@ -33,9 +32,7 @@ function decorateParam(target: Object, propertyKey: PropertyKey, parameterIndex:
     const endpoint = getEndpoint(target, propertyKey);
     const type = Reflect.getMetadata('design:paramtypes', target, propertyKey)[parameterIndex];
 
-    endpoint.params.push(
-        new Param(self, type, key)
-    );
+    endpoint.arguments[parameterIndex] = new Argument(self, type, key);
 }
 
 function decorateEndpoint(target: Object, propertyKey: PropertyKey, path: string, method: EndpointMethods, castType?: any) {

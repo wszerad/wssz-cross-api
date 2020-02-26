@@ -1,6 +1,6 @@
-import {Param} from './Param';
+import { Body, Param, Query } from '@nestjs/common';
+import {Argument} from './Argument';
 import {compile} from 'path-to-regexp';
-import {ApiBody, ApiParam, ApiQuery} from './decorators';
 
 export enum EndpointMethods {
     Get = 'get',
@@ -24,31 +24,25 @@ export class Endpoint {
     rawPath: string;
     method: EndpointMethods;
     returnType: any;
-    params: Param[] = [];
+    arguments: Argument[] = [];
 
     request(basePath: string, args: any[]): RequestPayload {
         const fullPath = `${basePath}/${this.rawPath}`.replace('//', '/');
         const patcher = compile(fullPath, {encode: encodeURIComponent});
-        const query = this.generateQuerystring(args);
+        const query = this.extractQuerystring(args);
+        const body = this.extractBody(args);
+
         return {
-            uri: patcher(this.generateFormatter(args)) + (Object.keys(query).length ? '?' + this.generateQuerystring(args) : ''),
-            body: this.extractBody(args)
+            uri: patcher(this.extractParams(args)) + (query ? '?' + query : ''),
+            body: body ? body : undefined
         };
     };
 
-    private extractBody(args: any[]): any {
-        try {
-            return this.extractParamType(ApiBody, args);
-        } catch (e) {
-            throw new Error('Body mismatch!');
-        }
-    }
-
-    private extractParamType(type: Function, args: any[]) {
-        let params: Params = {};
+    private extractByParamType(type: Function, args: any[]) {
+        let params: Params;
         let hasSingle = false;
 
-        this.params
+        this.arguments
             .forEach((param, index) => {
                 if (param.param === type) {
                     if (param.key) {
@@ -56,7 +50,7 @@ export class Endpoint {
                             throw new Error();
                         }
 
-                        params[param.key] = args[index];
+						(params = params || {})[param.key] = args[index];
                     } else {
                         hasSingle = true;
                         params = args[index];
@@ -67,20 +61,31 @@ export class Endpoint {
         return params;
     }
 
-    private generateQuerystring(args: any[]) {
+	private extractBody(args: any[]): any {
+		try {
+			return this.extractByParamType(Body, args);
+		} catch (e) {
+			throw new Error('Body mismatch!');
+		}
+	}
+
+    private extractQuerystring(args: any[]) {
         try {
-            const query = this.extractParamType(ApiQuery, args);
-            // ts-ignore
-            // TODO secure node usage
-            return new URLSearchParams(query as any);
+            const query = this.extractByParamType(Query, args);
+			if (!query) {
+				return '';
+			}
+
+			// TODO secure node usage (no URLSearchParams?)
+            return new URLSearchParams(query as any).toString();
         } catch (e) {
             throw new Error('Query mismatch!');
         }
     }
 
-    private generateFormatter(args: any[]) {
+    private extractParams(args: any[]) {
         try {
-            return this.extractParamType(ApiParam, args);
+            return this.extractByParamType(Param, args) || {};
         } catch (e) {
             throw new Error('Path mismatch!');
         }

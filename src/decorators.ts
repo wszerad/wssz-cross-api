@@ -14,3 +14,7 @@ export const ApiPatch = defineEndpointDecorator(EndpointMethods.Patch, Patch);
 export const ApiOptions = defineEndpointDecorator(EndpointMethods.Options, Options);
 export const ApiHead = defineEndpointDecorator(EndpointMethods.Head, Head);
 export const ApiAll = defineEndpointDecorator(EndpointMethods.All, All);
+
+export const Api = function () {
+
+}

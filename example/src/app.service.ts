@@ -6,8 +6,13 @@ import {Injectable} from '@nestjs/common';
 @Injectable()
 export class AppService {
     test() {
-        return apiHandler(AppSchema, 'test', handler)
-            .post({prop: 'd'});
+        const factory = apiHandler(AppSchema, 'test', handler);
+
+        return Promise.all([
+        	factory.query('test', {page: 'df'}),
+			factory.get('test2'),
+			factory.post({prop: 'd'})
+		]);
     }
 
     onApplicationBootstrap() {
@@ -16,7 +21,7 @@ export class AppService {
 }
 
 function handler(uri: string, body: any, endpoint: Endpoint) {
-    // Request for some data with axios, jQuery, etc.
+	// Request for some data with axios, jQuery, etc.
     return new Promise((res, rej) => {
         res({
             uri,
