@@ -1,11 +1,12 @@
-import {Body, Controller, Get, Param, Post, Query} from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Return } from '../../src/decorators';
 
 export class ApiData {
-    prop: string
+	prop: string
 }
 
 export class ApiResponse {
-    status: string;
+	status: string;
 }
 
 export class ApiQueryObj {
@@ -14,21 +15,23 @@ export class ApiQueryObj {
 
 @Controller('test')
 export class AppSchema {
-    @Post('/post')
-    async post(
-        @Body() body: ApiData,
-        // For additional backend decorators like @Req
-        ...args: any[]
-    ): Promise<ApiResponse> {
-        return;
-    }
+	@Post('/post')
+	// return type for await is Promise so overwrite it @Return
+	@Return(ApiResponse)
+	async post(
+		@Body() body: ApiData,
+		// For additional backend decorators like @Req
+		...args: any[]
+	): Promise<ApiResponse> {
+		return;
+	}
 
-    @Get('/get/:name')
-    get(
-        @Param('name') param: string
-    ): string {
-        return param;
-    }
+	@Get('/get/:name')
+	get(
+		@Param('name') param: string
+	): string {
+		return param;
+	}
 
 	@Get('/query/:name')
 	query(
