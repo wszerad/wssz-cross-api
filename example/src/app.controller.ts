@@ -1,7 +1,7 @@
 import {AppSchema, ApiData, ApiResponse} from '../schema/app.schema';
-import {Controller} from '@nestjs/common';
+import {AttachApi} from "../../src";
 
-@Controller('test')
+@AttachApi(AppSchema)
 export class AppController extends AppSchema {
     async post(
         body: ApiData

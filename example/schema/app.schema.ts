@@ -1,4 +1,4 @@
-import { ApiBody, ApiGet, ApiParam, ApiPost, ApiQuery } from '../../src';
+import {Body, Controller, Get, Param, Post, Query} from "@nestjs/common";
 
 export class ApiData {
     prop: string
@@ -12,27 +12,28 @@ export class ApiQueryObj {
 	page: string
 }
 
+@Controller('test')
 export class AppSchema {
-    @ApiPost('/post', ApiResponse)
+    @Post('/post')
     async post(
-        @ApiBody() body: ApiData,
+        @Body() body: ApiData,
         // For additional backend decorators like @Req
         ...args: any[]
     ): Promise<ApiResponse> {
         return;
     }
 
-    @ApiGet('/get/:name')
+    @Get('/get/:name')
     get(
-        @ApiParam('name') param: string
+        @Param('name') param: string
     ): string {
         return param;
     }
 
-	@ApiGet('/query/:name')
+	@Get('/query/:name')
 	query(
-		@ApiParam('name') param: string,
-		@ApiQuery() query: ApiQueryObj
+		@Param('name') param: string,
+		@Query() query: ApiQueryObj
 	): ApiQueryObj {
 		return query;
 	}

@@ -1,93 +1,68 @@
-import { Body, Param, Query } from '@nestjs/common';
-import {Argument} from './Argument';
-import {compile} from 'path-to-regexp';
+import {RequestMethod} from "@nestjs/common";
+import {compile} from "path-to-regexp";
+import {RouteParamtypes} from "@nestjs/common/enums/route-paramtypes.enum";
 
-export enum EndpointMethods {
-    Get = 'get',
-    Post = 'post',
-    Put = 'put',
-    Delete = 'delete',
-    Patch = 'patch',
-    Options = 'option',
-    Head = 'head',
-    All = 'all'
-}
-
-type Params = { [key: string]: string | number | (string | number)[] };
-
-interface RequestPayload {
-    uri: string;
-    body?: any;
+interface ArgInfo {
+    index: number,
+    data: string,
+    pipes: any
 }
 
 export class Endpoint {
-    rawPath: string;
-    method: EndpointMethods;
-    returnType: any;
-    arguments: Argument[] = [];
+    constructor(
+        private basePath: string,
+        private path: string | string[],
+        private methodCode: RequestMethod,
+        public returnType: any,
+        private args: { [key: string]: ArgInfo }
+    ) {
+    }
 
-    request(basePath: string, args: any[]): RequestPayload {
-        const fullPath = `${basePath}/${this.rawPath}`.replace('//', '/');
-        const patcher = compile(fullPath, {encode: encodeURIComponent});
-        const query = this.extractQuerystring(args);
-        const body = this.extractBody(args);
+    call(args: any[]) {
+        const patcher = compile(this.uri, {encode: encodeURIComponent});
+        const extractedParams = this.extractParams(args);
+        const query = extractedParams[RouteParamtypes.QUERY]
+            ? '?' + new URLSearchParams(extractedParams[RouteParamtypes.QUERY]).toString()
+            : '';
+        const body = extractedParams[RouteParamtypes.BODY];
+        const param = extractedParams[RouteParamtypes.PARAM] || {};
 
         return {
-            uri: patcher(this.extractParams(args)) + (query ? '?' + query : ''),
-            body: body ? body : undefined
+            uri: patcher(param) + query,
+            body
         };
     };
 
-    private extractByParamType(type: Function, args: any[]) {
-        let params: Params;
-        let hasSingle = false;
-
-        this.arguments
-            .forEach((param, index) => {
-                if (param.param === type) {
-                    if (param.key) {
-                        if (hasSingle) {
-                            throw new Error();
-                        }
-
-						(params = params || {})[param.key] = args[index];
-                    } else {
-                        hasSingle = true;
-                        params = args[index];
-                    }
-                }
-            });
-
-        return params;
+    get uri() {
+        return `${this.basePath}/${this.path}`.replace('//', '/');
     }
 
-	private extractBody(args: any[]): any {
-		try {
-			return this.extractByParamType(Body, args);
-		} catch (e) {
-			throw new Error('Body mismatch!');
-		}
-	}
-
-    private extractQuerystring(args: any[]) {
-        try {
-            const query = this.extractByParamType(Query, args);
-			if (!query) {
-				return '';
-			}
-
-			// TODO secure node usage (no URLSearchParams?)
-            return new URLSearchParams(query as any).toString();
-        } catch (e) {
-            throw new Error('Query mismatch!');
-        }
+    get method(): string {
+        return new Map([
+            [RequestMethod.GET, 'get'],
+            [RequestMethod.POST, 'post'],
+            [RequestMethod.PUT, 'put'],
+            [RequestMethod.DELETE, 'delete'],
+            [RequestMethod.PATCH, 'patch'],
+            [RequestMethod.ALL, 'all'],
+            [RequestMethod.OPTIONS, 'options'],
+            [RequestMethod.HEAD, 'head']
+        ])
+            .get(this.methodCode);
     }
 
     private extractParams(args: any[]) {
-        try {
-            return this.extractByParamType(Param, args) || {};
-        } catch (e) {
-            throw new Error('Path mismatch!');
-        }
+        const params: { [key: string]: any } = {};
+        Object.entries(this.args)
+            .reduce((acc, [type, info]) => {
+                const [paramType, index] = type.split(':');
+
+                acc[paramType] = info.data
+                    ? {...acc[paramType], [info.data]: args[Number(index)]}
+                    : args[Number(index)];
+
+                return acc;
+            }, params);
+        return params;
     }
 }
