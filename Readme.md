@@ -32,7 +32,7 @@
     //front.ts
     extractApi(TestSchema, xhrHandler).endpoint('path', { page: '1' }, { body: 'value' })
     
-    function handler(uri: string, body: any, endpoint: Endpoint) {
+    function xhrHandler(uri: string, body: any, endpoint: Endpoint) {
         // Request for some data with axios, jQuery, etc.
         return new Promise((res, rej) => {
             res({
