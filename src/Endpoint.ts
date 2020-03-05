@@ -1,4 +1,4 @@
-import { RequestMethod } from '@nestjs/common';
+import { RequestMethod } from '@nestjs/common/enums/request-method.enum';
 import { compile } from 'path-to-regexp';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
 

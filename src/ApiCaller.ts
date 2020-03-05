@@ -1,5 +1,5 @@
 import { METHOD_METADATA, PATH_METADATA, ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
-import { RequestMethod } from '@nestjs/common';
+import { RequestMethod } from '@nestjs/common/enums/request-method.enum';
 import { RETURN_METADATA } from './decorators';
 import { Endpoint } from './Endpoint';
 
