@@ -1,6 +1,6 @@
 import { METHOD_METADATA, PATH_METADATA, ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { RequestMethod } from '@nestjs/common';
-import { RETURN_METADATA } from './decorators';
+import { RETURN_METADATA, SCHEMA_METADATA } from './decorators';
 import { Endpoint } from './Endpoint';
 
 export class ApiCaller {
@@ -20,7 +20,7 @@ export class ApiCaller {
 	}
 
 	private getBaseUrl() {
-		return this.extractPath(this.origin) as string;
+		return this.extractBasePath(this.origin);
 	}
 
 	private getPath(key: PropertyKey) {
@@ -38,6 +38,10 @@ export class ApiCaller {
 			...returns,
 			default: returns.default || functionReturnType,
 		};
+	}
+
+	private extractBasePath(target: any): string {
+		return Reflect.getMetadata(SCHEMA_METADATA, target);
 	}
 
 	private extractPath(target: any): string | string[] {

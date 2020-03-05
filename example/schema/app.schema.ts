@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { Return } from '../../src/decorators';
+import { Body, Get, Param, Post, Query } from '@nestjs/common';
+import { Return, Schema } from '../../src/decorators';
 
 export class ApiData {
 	prop: string
@@ -13,7 +13,7 @@ export class ApiQueryObj {
 	page: string
 }
 
-@Controller('test')
+@Schema('test')
 export class AppSchema {
 	@Post('/post')
 	// return type for await is Promise so overwrite it @Return

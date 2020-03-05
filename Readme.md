@@ -14,7 +14,9 @@
 * use methods for calling endpoints!
  
 #### @AttachApi(SchemaControllerClass)
-> clone decorators from SchemaControllerClass to ControllerClass
+> clone decorators from SchemaControllerClass to ControllerClass and inject @Controller
+#### @Schema(path: string | {path: string, host: string})
+> Use instead of @Controller on schema
 #### @Return(key: string = 'default', type: any)
 > Overwrite endpoint return type (useful for await where default type is Promise)
 #### extractApi(SchemaControllerClass, xhrHandler): SchemaControllerClass
@@ -36,7 +38,7 @@ function xhrHandler(url: string, body: any, endpoint: Endpoint): Promise<any> {
 * Check [example](https://github.com/wszerad/wssz-cross-api/tree/master/example) for more
 ```typescript
     //shared.ts
-    @Controller('test')
+    @Schema('test')
     export class TestSchema {
         @Post('/:endpoint')
         endpont(
