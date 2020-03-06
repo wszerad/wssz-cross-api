@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { Return } from '../../src/decorators';
+import { Controller, Post, Return, Body, Get, Param, Query } from '../../src/decorators';
 
 export class ApiData {
 	prop: string
