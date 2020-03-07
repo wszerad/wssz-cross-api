@@ -38,7 +38,9 @@ export class Endpoint {
 	}
 
 	get uri() {
-		return `${this.basePath}/${this.path}`.replace('//', '/');
+		return `${this.basePath}/${this.path}`
+			.replace(/\/\//ig, '/')
+			.replace(/\/$/, '');
 	}
 
 	get method(): string {
