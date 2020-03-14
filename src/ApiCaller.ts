@@ -3,7 +3,6 @@ import { Endpoint } from './Endpoint';
 import { METHOD_METADATA, PATH_METADATA, ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { RequestMethod } from '@nestjs/common';
 
-
 export class ApiCaller {
 	constructor(
 		public origin: any
@@ -42,14 +41,14 @@ export class ApiCaller {
 	}
 
 	private extractPath(target: any): string | string[] {
-		return Reflect.getMetadata(PATH_METADATA, target);
+		return Reflect.getMetadata(PATH_METADATA, target) || '';
 	}
 
 	private extractMethod(target: any): RequestMethod {
-		return Reflect.getMetadata(METHOD_METADATA, target);
+		return Reflect.getMetadata(METHOD_METADATA, target) || RequestMethod.GET;
 	}
 
 	private extractParamArgs(key: PropertyKey) {
-		return Reflect.getMetadata(ROUTE_ARGS_METADATA, this.origin.prototype.constructor, key as any);
+		return Reflect.getMetadata(ROUTE_ARGS_METADATA, this.origin.prototype.constructor, key as any) || {};
 	}
 }
