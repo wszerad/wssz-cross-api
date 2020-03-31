@@ -1,4 +1,4 @@
-import { Controller, Post, Return, Body, Get, Param, Query } from '../../src/decorators';
+import { Controller, Post, Return, Body, Get, Param, Query } from '../../index';
 
 export class ApiData {
 	prop: string
