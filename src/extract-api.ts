@@ -20,7 +20,7 @@ export function extractApi<T>(Api: ApiFactory<T>, requestFactory: RequestFactory
 
 			Object.defineProperty(apiClone, key, {
 				value: function (...args: any[]) {
-					const endpoint = this.getEndpoint(key);
+					const endpoint = apiClone.getEndpoint(key);
 					const payload = endpoint.call(args);
 					return requestFactory(payload.url, payload.body, endpoint);
 				},
