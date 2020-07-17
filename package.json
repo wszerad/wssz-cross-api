@@ -35,7 +35,7 @@
 		"path-to-regexp": "^6.1.0",
 		"reflect-metadata": "^0.1.13",
 		"rxjs": "^6.5.5",
-		"typescript": "^3.9.6"
+		"typescript": "^3.9.7"
 	},
 	"peerDependencies": {
 		"@nestjs/common": "^7.3.2"
