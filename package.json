@@ -14,7 +14,7 @@
 	},
 	"devDependencies": {
 		"@nestjs/common": "^7.6.6",
-		"@nestjs/core": "^7.6.5",
+		"@nestjs/core": "^7.6.6",
 		"@nestjs/platform-express": "^7.6.6",
 		"@types/chai": "^4.2.14",
 		"@types/mocha": "^8.2.0",
