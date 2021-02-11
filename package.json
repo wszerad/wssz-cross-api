@@ -16,7 +16,7 @@
 		"@nestjs/common": "^7.6.11",
 		"@nestjs/core": "^7.6.11",
 		"@nestjs/platform-express": "^7.6.11",
-		"@types/chai": "^4.2.14",
+		"@types/chai": "^4.2.15",
 		"@types/mocha": "^8.2.0",
 		"@types/node": "^14.14.25",
 		"@types/reflect-metadata": "^0.1.0",
