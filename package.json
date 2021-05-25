@@ -18,7 +18,7 @@
 		"@nestjs/platform-express": "^7.6.17",
 		"@types/chai": "^4.2.18",
 		"@types/mocha": "^8.2.2",
-		"@types/node": "^15.6.0",
+		"@types/node": "^15.6.1",
 		"@types/reflect-metadata": "^0.1.0",
 		"chai": "^4.3.4",
 		"clean-webpack-plugin": "^3.0.0",
